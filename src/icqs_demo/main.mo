@@ -7,7 +7,7 @@ import TBase "./types/base";
 
 import QQ "../../external_libs/Queue/src/Queue";
 
-actor class MailingQueue() {
+actor {
     // TODO: once `dfx` handles it, add initial queueConfig as a parameter to the actor
 
     var queueConfig: TBase.QueueConfig = {
