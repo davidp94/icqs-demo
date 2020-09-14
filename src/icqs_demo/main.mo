@@ -47,7 +47,7 @@ actor {
         while(not QQ.isEmpty(q)) {
             let (i, q0) = QQ.dequeue(q);
             l := List.push<T.MailRequest>(Option.unwrap(i), l);
-            q := q;
+            q := q0;
         };
         List.toArray<T.MailRequest>(l)
     };
