@@ -4,6 +4,10 @@
       "main": "src/icqs_demo/main.mo",
       "type": "motoko"
     },
+    "icqs_demo_developer_canister": {
+      "main": "src/icqs_demo_developer_canister/main.mo",
+      "type": "motoko"
+    },
     "icqs_demo_assets": {
       "dependencies": [
         "icqs_demo"
