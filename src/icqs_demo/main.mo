@@ -24,9 +24,13 @@ actor {
         assert(queueConfig.administrators.size() == 0 or isAdministrator(msg.caller));
         queueConfig := _queueConfig;
     };
+
+    // public query func greet(): async () {
+
+    // };
     
 
-    public func getConfig(): async (TBase.QueueConfig) {
+    public query func getConfig(): async (TBase.QueueConfig) {
         return queueConfig;
     };
     
@@ -46,6 +50,12 @@ actor {
             q := q;
         };
         List.toArray<T.MailRequest>(l)
+    };
+
+    // utils function
+
+    public shared (msg) func whoami(): async Principal {
+        msg.caller
     };
 
     private func isAdministrator(c: Principal): Bool {
