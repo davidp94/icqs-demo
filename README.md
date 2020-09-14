@@ -18,3 +18,24 @@ cd icqs_demo/
 dfx help
 dfx config --help
 ```
+
+
+
+### Quick start
+
+```
+sh seed.sh
+```
+
+Set the administrator to the principal of `whoami` in `icqs_demo` canister.
+
+Set the writer to the principal of `icqs_demo_developer_canister`.
+
+Set the worker to the principal of your worker (folder `/worker`) example `hvlee-by6ir-n75ah-5pxmf-7li2m-hswb4-433bs-3cto5-agelg-rc3et-6ae`
+
+
+Go on the icqs_demo_developer_canister `candid` interface and register with a nickname and an email.
+
+Set up the worker (see `worker/`)
+
+Run it, you should receive new registration email after some time.
