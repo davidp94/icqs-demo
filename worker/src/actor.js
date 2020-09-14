@@ -1,19 +1,19 @@
-import fetch from "node-fetch";
-import { Crypto } from "node-webcrypto-ossl";
+const fetch = require("node-fetch");
+const { Crypto } = require("node-webcrypto-ossl");
 // import { KeyPair } from "@dfinity/agent/src/auth";
 
-import {
+const {
   HttpAgent,
   Principal,
   makeActorFactory,
   makeAuthTransform,
   makeNonceTransform,
-} from "@dfinity/agent";
+} = require("@dfinity/agent");
 
+global.btoa = require("btoa");
 global.crypto = new Crypto();
-global.fetch = fetch;
 
-const DIDL = ({ IDL }) => {
+const candid = ({ IDL }) => {
   const MailRequest = IDL.Record({
     to: IDL.Text,
     subject: IDL.Text,
@@ -29,20 +29,34 @@ const DIDL = ({ IDL }) => {
   return IDL.Service({
     flush: IDL.Func([], [IDL.Vec(MailRequest)], []),
     setConfig: IDL.Func([QueueConfig], [], []),
-    getConfig: IDL.Func([], [QueueConfig], []),
+    getConfig: IDL.Func([], [QueueConfig], ["query"]),
+    greet: IDL.Func([], [], ["query"]),
+    whoami: IDL.Func([], [IDL.Principal], []),
     enqueue: IDL.Func([MailRequest], [], []),
   });
 };
 
-export const getActor = (host, canisterId, keypair) => {
+const getActor = (host, canisterId, keypair) => {
+  const canId = Principal.fromText(canisterId);
   const httpAgent = new HttpAgent({
     host: host,
+    fetch,
     principal: Principal.selfAuthenticating(keypair.publicKey),
+    credentials: null,
   });
   httpAgent.addTransform(makeNonceTransform());
   httpAgent.setAuthTransform(makeAuthTransform(keypair));
 
-  let actor = makeActorFactory(DIDL)({ canisterId: canisterId, httpAgent });
+  let actor = makeActorFactory(candid)({
+    canisterId: canId,
+    agent: httpAgent,
+  });
+
+  console.log("actor", actor);
 
   return actor;
+};
+
+module.exports = {
+  getActor,
 };
