@@ -52,7 +52,7 @@ const getActor = (host, canisterId, keypair) => {
     agent: httpAgent,
   });
 
-  console.log("actor", actor);
+//   console.log("actor", actor);
 
   return actor;
 };

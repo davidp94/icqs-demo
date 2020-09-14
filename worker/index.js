@@ -14,8 +14,6 @@ const icqsWorkerTasksQueue = new Queue(
 
 const kObj = JSON.parse(Buffer.from(process.env.DFX_KEY, "base64").toString());
 
-// console.log(kObj);
-
 const actor = getActor(
   process.env.DFX_HOST,
   process.env.DFX_CANISTERID,
@@ -23,47 +21,36 @@ const actor = getActor(
 );
 
 // actor
-//   .whoami((principal) => {
+//   .whoami()
+//   .then((principal) => {
 //     console.log("actor loaded");
-//     console.log("principal of actor", principal);
+//     console.log("principal of actor", principal.toString());
 //   })
 //   .catch(console.error);
 
-// console.log(Actor.canisterIdOf(actor).toString())
-
-
-// Actor.createActorClass()
-
-actor
-  .getConfig((config) => {
-    console.log("actor config", config);
-  })
-  .catch(console.error);
-
-// actor
-//   .greet((config) => {
-//     console.log("actor greet", config);
-//   })
-//   .catch(console.error);
-
-icqsWorkerQueue.process((job, doneCallback) => {
+icqsWorkerQueue.process(async (job, doneCallback) => {
   //   console.log("TODO: process", job);
-  console.log("TODO: flush queue");
-  console.log("TODO: process each job");
-  doneCallback(null);
+
+  const tasks = await actor.flush();
+
+  tasks.forEach((t) => {
+    // console.log("TODO: process each job", t);
+    icqsWorkerTasksQueue.add(t);
+  });
+  doneCallback(null, { tasks });
 });
 
 // every five seconds fetch the queue canister
 icqsWorkerQueue.add({ foo: "bar" }, { repeat: { every: 5000 } });
 
 icqsWorkerTasksQueue.process((job, doneCallback) => {
-  //   console.log("TODO: process", job);
-  console.log("TODO: sendEmail");
+//   console.log("TODO: process", job);
+  const { to, subject, body } = job.data;
   const msg = {
-    to: "icqsdemo@yopmail.net",
-    from: "davidphan33@gmail.com",
-    subject: "Sending with icqs is fun",
-    text: "and easy to do anywhere, even with Motoko",
+    to: to,
+    from: process.env.SENDGRID_FROM,
+    subject: "[ICQS] " + subject,
+    text: body,
   };
   sgMail.send(msg);
   doneCallback(null);
